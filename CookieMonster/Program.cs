@@ -56,6 +56,12 @@ namespace CookieMonster
                         GetChromeCookies(cookiePath, domains, names, enc);
                     }
 
+                    if (browser == "Firefox")
+                    {
+                        string profilePath = Firefox.GetProfilePath();
+                        GetFirefoxCookies(profilePath, domains, names, enc);
+                    }
+
                 })
                 .WithParsed<Credentials>(opts =>
                 {
@@ -66,6 +72,13 @@ namespace CookieMonster
                         string credPath = Chrome.GetCredPath();
                         GetChromeCredentials(credPath);
                     }
+
+                    if (browser == "Firefox")
+                    {
+                        Console.WriteLine("Firefox credentials extract - not yet supported.");
+                        Environment.Exit(0);
+                    }
+
                 });
         }
 
@@ -93,6 +106,28 @@ namespace CookieMonster
         private static void GetChromeCredentials(string credPath)
         {
             Chrome.ReadCredentials(credPath);
+        }
+
+
+        private static void GetFirefoxCookies(string profilePath, string[] domains, string[] names, bool enc)
+        {
+            if (names.Length > 0)
+            {
+                foreach (string d in domains)
+                {
+                    foreach (string n in names)
+                    {
+                        Firefox.ReadCookies(profilePath, d, enc, n);
+                    }
+                }
+            }
+            else
+            {
+                foreach (string d in domains)
+                {
+                    Firefox.ReadCookies(profilePath, d, enc, string.Empty);
+                }
+            }
         }
 
     }
